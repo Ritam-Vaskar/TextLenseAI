@@ -363,8 +363,8 @@ document.addEventListener('DOMContentLoaded', function() {
                   display: block;
                   margin-bottom: 8px;
                   font-weight: 500;
-                ">Gemini API Key:</label>
-                <input type="password" id="apiKey" placeholder="Enter your Gemini API key" style="
+                ">Groq API Key:</label>
+                <input type="password" id="apiKey" placeholder="Enter your Groq API key" style="
                   width: 100%;
                   padding: 8px;
                   border: 1px solid #ddd;
@@ -372,7 +372,7 @@ document.addEventListener('DOMContentLoaded', function() {
                   margin-bottom: 8px;
                 ">
                 <small style="color: #666;">
-                  Get your API key from <a href="https://makersuite.google.com/app/apikey" target="_blank">Google AI Studio</a>
+                  Get your API key from <a href="https://console.groq.com/keys" target="_blank">Groq API Key</a>
                 </small>
               </div>
               <div class="setting-actions">

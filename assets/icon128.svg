@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
-  <rect width="128" height="128" rx="16" fill="#3498db"/>
-  <text x="64" y="90" font-family="Arial" font-size="86" fill="white" text-anchor="middle">T</text>
-  <path d="M26 102l16-16m6-6l16-16" stroke="white" stroke-width="8" fill="none"/>
-</svg>

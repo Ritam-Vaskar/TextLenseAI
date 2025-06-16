@@ -48,6 +48,61 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Error checking API key:', error);
       }
     }
+
+    // Convert markdown text to plain text with better formatting
+    function markdownToPlainText(markdown) {
+      if (!markdown) return '';
+      
+      let text = markdown;
+      
+      // Handle code blocks first (preserve content but remove syntax)
+      text = text.replace(/```[\w]*\n?([\s\S]*?)```/g, (match, code) => {
+        return '\n--- CODE ---\n' + code.trim() + '\n--- END CODE ---\n';
+      });
+      
+      // Remove inline code backticks but keep content
+      text = text.replace(/`([^`]+)`/g, '$1');
+      
+      // Remove headers but keep content with proper spacing
+      text = text.replace(/^#{1,6}\s+(.+)$/gm, '\n$1\n');
+      
+      // Remove bold and italic formatting
+      text = text.replace(/\*\*(.*?)\*\*/g, '$1');
+      text = text.replace(/__(.*?)__/g, '$1');
+      text = text.replace(/\*(.*?)\*/g, '$1');
+      text = text.replace(/_(.*?)_/g, '$1');
+      
+      // Remove strikethrough
+      text = text.replace(/~~(.*?)~~/g, '$1');
+      
+      // Handle numbered lists - convert to clean format
+      text = text.replace(/^\s*(\d+)\.\s+(.+)$/gm, '$1. $2');
+      
+      // Handle bullet points - convert to clean format
+      text = text.replace(/^\s*[-*+]\s+(.+)$/gm, '• $1');
+      
+      // Remove blockquotes
+      text = text.replace(/^>\s+/gm, '');
+      
+      // Remove horizontal rules
+      text = text.replace(/^[-*_]{3,}$/gm, '');
+      
+      // Remove links but keep text
+      text = text.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+      text = text.replace(/\[([^\]]+)\]\[[^\]]*\]/g, '$1');
+      
+      // Remove images but keep alt text
+      text = text.replace(/!\[([^\]]*)\]\([^)]+\)/g, '$1');
+      
+      // Clean up multiple line breaks
+      text = text.replace(/\n{3,}/g, '\n\n');
+      
+      // Clean up extra spaces
+      text = text.replace(/[ \t]+/g, ' ');
+      
+      // Trim and return
+      return text.trim();
+    }
   
     // Start selection
     startSelectionBtn.addEventListener('click', async () => {
@@ -181,12 +236,61 @@ document.addEventListener('DOMContentLoaded', function() {
       }, 1000);
     }
   
-    // Show result
+    // Show result with enhanced formatting
     function showResult(result) {
       hideAll();
       textContent.textContent = result.extractedText;
-      analysisContent.textContent = result.analysis;
+      
+      // Convert markdown analysis to plain text
+      let plainTextAnalysis = markdownToPlainText(result.analysis);
+      
+      // Apply additional formatting for better readability
+      plainTextAnalysis = formatPlainText(plainTextAnalysis);
+      
+      analysisContent.innerHTML = plainTextAnalysis;
       resultSection.classList.remove('hidden');
+    }
+    
+    // Format plain text for better display
+    function formatPlainText(text) {
+      // Split into lines for processing
+      let lines = text.split('\n');
+      let formattedLines = [];
+      
+      for (let line of lines) {
+        line = line.trim();
+        if (!line) {
+          formattedLines.push('');
+          continue;
+        }
+        
+        // Handle code blocks
+        if (line === '--- CODE ---') {
+          formattedLines.push('<div style="background-color: #f5f5f5; padding: 10px; margin: 5px 0; border-radius: 4px; font-family: monospace; border-left: 4px solid #007acc;">');
+          continue;
+        }
+        if (line === '--- END CODE ---') {
+          formattedLines.push('</div>');
+          continue;
+        }
+        
+        // Handle numbered lists
+        if (/^\d+\.\s/.test(line)) {
+          formattedLines.push(`<div style="margin: 5px 0; padding-left: 20px;">${line}</div>`);
+          continue;
+        }
+        
+        // Handle bullet points
+        if (line.startsWith('• ')) {
+          formattedLines.push(`<div style="margin: 5px 0; padding-left: 20px;">${line}</div>`);
+          continue;
+        }
+        
+        // Regular text
+        formattedLines.push(`<div style="margin: 8px 0;">${line}</div>`);
+      }
+      
+      return formattedLines.join('');
     }
   
     // Show loading
